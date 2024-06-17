@@ -27,7 +27,7 @@ app.use(express_1.default.json());
 const signupSchema = zod_1.z.object({
     email: zod_1.z.string().email(),
     password: zod_1.z.string().min(8),
-    name: zod_1.z.string().min(1)
+    name: zod_1.z.string().min(1),
 });
 const signinSchema = zod_1.z.object({
     email: zod_1.z.string().email(),
@@ -36,7 +36,7 @@ const signinSchema = zod_1.z.object({
 const postSchema = zod_1.z.object({
     title: zod_1.z.string().min(3),
     description: zod_1.z.string().min(10),
-    tags: zod_1.z.string()
+    tags: zod_1.z.string(),
 });
 app.post("/auth/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var body = req.body;
@@ -45,7 +45,7 @@ app.post("/auth/signup", (req, res) => __awaiter(void 0, void 0, void 0, functio
         return res.status(202).send("Wrong format of the email or password");
     }
     var user = yield prisma.user.findFirst({
-        where: { email: body.email }
+        where: { email: body.email },
     });
     if (user != null) {
         return res.status(202).send("User already exists, signin");
@@ -56,12 +56,12 @@ app.post("/auth/signup", (req, res) => __awaiter(void 0, void 0, void 0, functio
             name: body.name,
             email: body.email,
             password: hashedPassword,
-            time: ((currentDate.getTime()) / 100)
-        }
+            time: currentDate.getTime() / 100,
+        },
     });
     if (data != null) {
         var token = jsonwebtoken_1.default.sign({ name: body.name }, jwtSecret);
-        return res.status(200).send(token + '+' + data.name[0].toUpperCase());
+        return res.status(200).send(token + "+" + data.name[0].toUpperCase());
     }
 }));
 app.post("/auth/signin", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -71,7 +71,7 @@ app.post("/auth/signin", (req, res) => __awaiter(void 0, void 0, void 0, functio
         return res.status(202).send("Wrong format of the email or password");
     }
     var user = yield prisma.user.findFirst({
-        where: { email: body.email }
+        where: { email: body.email },
     });
     if (user == null) {
         return res.status(202).send("User doesnt exists, signup");
@@ -82,7 +82,7 @@ app.post("/auth/signin", (req, res) => __awaiter(void 0, void 0, void 0, functio
             return res.status(202).send("Wrong password");
         }
         var token = jsonwebtoken_1.default.sign({ name: user.name }, jwtSecret);
-        return res.status(200).send(token + '+' + user.name[0].toUpperCase());
+        return res.status(200).send(token + "+" + user.name[0].toUpperCase());
     }
 }));
 app.use("/api/*", (req, res, next) => {
@@ -100,7 +100,7 @@ app.post("/api/question", (req, res) => __awaiter(void 0, void 0, void 0, functi
     var verify = jsonwebtoken_1.default.decode(token);
     if (verify !== null && typeof verify === "object") {
         var data = yield prisma.user.findFirst({
-            where: { name: verify.name }
+            where: { name: verify.name },
         });
         if (data != null) {
             var question = yield prisma.question.create({
@@ -110,8 +110,8 @@ app.post("/api/question", (req, res) => __awaiter(void 0, void 0, void 0, functi
                     title: body.title,
                     description: body.description,
                     tags: body.tags,
-                    time: ((currentDate.getTime()) / 100)
-                }
+                    time: currentDate.getTime() / 100,
+                },
             });
             return res.status(200).send("question creation success");
         }
@@ -123,7 +123,7 @@ app.post("/api/answer", (req, res) => __awaiter(void 0, void 0, void 0, function
     var verify = jsonwebtoken_1.default.decode(token);
     if (verify !== null && typeof verify === "object") {
         var data = yield prisma.user.findFirst({
-            where: { name: verify.name }
+            where: { name: verify.name },
         });
         if (data != null) {
             var question = yield prisma.answer.create({
@@ -132,12 +132,13 @@ app.post("/api/answer", (req, res) => __awaiter(void 0, void 0, void 0, function
                     name: data.name,
                     question_id: body.id,
                     answer: body.answer,
-                    time: ((currentDate.getTime()) / 100)
-                }
+                    time: currentDate.getTime() / 100,
+                },
             });
             var send = yield prisma.question.findFirst({
                 where: { id: body.id },
-                select: { id: true,
+                select: {
+                    id: true,
                     user_id: true,
                     title: true,
                     name: true,
@@ -146,7 +147,8 @@ app.post("/api/answer", (req, res) => __awaiter(void 0, void 0, void 0, function
                     upvote: true,
                     downvote: true,
                     tags: true,
-                    time: true, }
+                    time: true,
+                },
             });
             return res.status(200).json(send);
         }
@@ -165,7 +167,7 @@ app.get("/send/all", (req, res) => __awaiter(void 0, void 0, void 0, function* (
             downvote: true,
             tags: true,
             time: true,
-        }
+        },
     });
     return res.status(200).json(data);
 }));
@@ -184,7 +186,7 @@ app.get("/send/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* (
             downvote: true,
             tags: true,
             time: true,
-        }
+        },
     });
     return res.status(200).json(data);
 }));
@@ -195,8 +197,8 @@ app.put("/api/question", (req, res) => __awaiter(void 0, void 0, void 0, functio
         where: { id: question_id },
         data: {
             title: data.title,
-            description: data.description
-        }
+            description: data.description,
+        },
     });
     return res.status(200).send("question updated successfully");
 }));
@@ -206,25 +208,25 @@ app.put("/api/answer", (req, res) => __awaiter(void 0, void 0, void 0, function*
     var answer = yield prisma.answer.update({
         where: { id: answer_id },
         data: {
-            answer: data.answer
-        }
+            answer: data.answer,
+        },
     });
     return res.status(200).send("question updated successfully");
 }));
 app.get("/api/delete/answer", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var answer_id = Number(req.headers.answer_id);
     var answer = yield prisma.answer.delete({
-        where: { id: answer_id }
+        where: { id: answer_id },
     });
     return res.status(200).send("answer deleted successfully");
 }));
 app.get("/api/delete/question", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var question_id = Number(req.headers.question_id);
     var answer = yield prisma.answer.deleteMany({
-        where: { question_id }
+        where: { question_id },
     });
     var question = yield prisma.question.delete({
-        where: { id: question_id }
+        where: { id: question_id },
     });
     return res.status(200).json(answer);
 }));
@@ -247,8 +249,8 @@ app.get("/verify", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 tags: true,
                 time: true,
                 question: true,
-                answer: true
-            }
+                answer: true,
+            },
         });
         return res.status(200).json(data);
     }
@@ -260,9 +262,47 @@ app.post("/api/user", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         where: { id: user_id },
         data: {
             about: data.about,
-            tags: data.tags
-        }
+            tags: data.tags,
+        },
     });
     return res.status(200).send("user updated successfully");
+}));
+app.get("/api/send/user/all", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var user = yield prisma.user.findMany({
+        select: {
+            id: true,
+            name: true,
+            tags: true,
+        },
+    });
+    return res.status(200).json(user);
+}));
+app.get("/api/send/user/:name", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var name = String(req.params.name);
+    var user = yield prisma.user.findFirst({
+        where: { name },
+        select: {
+            id: true,
+            name: true,
+            tags: true,
+            about: true,
+            time: true,
+            question: true,
+            answer: true
+        },
+    });
+    return res.status(200).json(user);
+}));
+app.post("/api/vote", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var body = req.body;
+    var id = Number(req.headers.question_id);
+    var data = yield prisma.question.update({
+        where: { id },
+        data: {
+            upvote: body.upvote,
+            downvote: body.downvote
+        }
+    });
+    return res.status(200).json(data);
 }));
 app.listen(3000);
