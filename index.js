@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const zod_1 = require("zod");
+require('dotenv').config()
 const cors_1 = __importDefault(require("cors"));
 const client_1 = require("@prisma/client");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -21,7 +22,7 @@ const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const currentDate = new Date();
 const prisma = new client_1.PrismaClient();
 const app = (0, express_1.default)();
-const jwtSecret = "sr1435"
+const jwtSecret = process.env.JWT_PASSCODE;
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 const signupSchema = zod_1.z.object({
