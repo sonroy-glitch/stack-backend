@@ -21,7 +21,7 @@ const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const currentDate = new Date();
 const prisma = new client_1.PrismaClient();
 const app = (0, express_1.default)();
-const jwtSecret = "sr1435";
+const jwtSecret = process.env.JWT_PASSCODE
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 const signupSchema = zod_1.z.object({
