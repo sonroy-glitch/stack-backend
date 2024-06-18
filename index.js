@@ -113,7 +113,7 @@ app.post("/api/question", (req, res) => __awaiter(void 0, void 0, void 0, functi
                     time: currentDate.getTime() / 100,
                 },
             });
-            return res.status(200).send("question creation success");
+            return res.status(200).json(question);
         }
     }
 }));
